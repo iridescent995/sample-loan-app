@@ -1,12 +1,16 @@
 package com.example.loan.service;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EmiCalculatorTest {
+
+    private static final Logger log = LoggerFactory.getLogger(EmiCalculatorTest.class);
 
     private final EmiCalculator calculator = new EmiCalculator();
 
@@ -19,7 +23,7 @@ class EmiCalculatorTest {
                 36
         );
 
-        printCheck("EMI for 500000.00 at 12.00% over 36 months", expectedEmi, emi);
+        logCheck("EMI for 500000.00 at 12.00% over 36 months", expectedEmi, emi);
         assertEquals(expectedEmi, emi);
     }
 
@@ -32,11 +36,11 @@ class EmiCalculatorTest {
                 36
         );
 
-        printCheck("EMI for 500000.00 at 0% over 36 months", expectedEmi, emi);
+        logCheck("EMI for 500000.00 at 0% over 36 months", expectedEmi, emi);
         assertEquals(expectedEmi, emi);
     }
 
-    private void printCheck(String check, Object expected, Object actual) {
-        System.out.printf("%s: expected=%s, actual=%s%n", check, expected, actual);
+    private void logCheck(String check, Object expected, Object actual) {
+        log.info("{}: expected={}, actual={}", check, expected, actual);
     }
 }

@@ -2,6 +2,8 @@ package com.example.loan.service;
 
 import com.example.loan.domain.EmploymentType;
 import com.example.loan.domain.RiskBand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -9,6 +11,8 @@ import java.math.RoundingMode;
 
 @Service
 public class InterestRateCalculator {
+
+    private static final Logger log = LoggerFactory.getLogger(InterestRateCalculator.class);
 
     public static final BigDecimal BASE_RATE = new BigDecimal("12.00");
 
@@ -24,7 +28,14 @@ public class InterestRateCalculator {
                 .add(employmentPremium(employmentType))
                 .add(loanSizePremium(loanAmount));
 
-        return rate.setScale(2, RoundingMode.HALF_UP);
+        BigDecimal finalRate = rate.setScale(2, RoundingMode.HALF_UP);
+        log.debug(
+                "Calculated interest rate {} for {} risk and {} employment",
+                finalRate,
+                riskBand,
+                employmentType
+        );
+        return finalRate;
     }
 
     private BigDecimal riskPremium(RiskBand riskBand) {

@@ -8,6 +8,8 @@ import com.example.loan.domain.RiskBand;
 import com.example.loan.web.dto.ApplicantRequest;
 import com.example.loan.web.dto.LoanRequest;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,6 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class LoanEvaluationServiceTest {
+
+    private static final Logger log = LoggerFactory.getLogger(LoanEvaluationServiceTest.class);
 
     private final LoanEvaluationService service = new LoanEvaluationService(
             new EmiCalculator(),
@@ -31,12 +35,12 @@ class LoanEvaluationServiceTest {
                 loan("500000.00", 36)
         );
 
-        printCheck("Approval status", ApplicationStatus.APPROVED, decision.status());
-        printCheck("Risk band for credit score 720", RiskBand.MEDIUM, decision.riskBand());
-        printCheck("Interest rate for medium risk salaried applicant", new BigDecimal("13.50"), decision.offer().interestRate());
-        printCheck("Requested tenure in generated offer", 36, decision.offer().tenureMonths());
-        printCheck("Final EMI for generated offer", new BigDecimal("16967.64"), decision.offer().emi());
-        printCheck("Total payable for generated offer", new BigDecimal("610835.04"), decision.offer().totalPayable());
+        logCheck("Approval status", ApplicationStatus.APPROVED, decision.status());
+        logCheck("Risk band for credit score 720", RiskBand.MEDIUM, decision.riskBand());
+        logCheck("Interest rate for medium risk salaried applicant", new BigDecimal("13.50"), decision.offer().interestRate());
+        logCheck("Requested tenure in generated offer", 36, decision.offer().tenureMonths());
+        logCheck("Final EMI for generated offer", new BigDecimal("16967.64"), decision.offer().emi());
+        logCheck("Total payable for generated offer", new BigDecimal("610835.04"), decision.offer().totalPayable());
         assertEquals(ApplicationStatus.APPROVED, decision.status());
         assertEquals(RiskBand.MEDIUM, decision.riskBand());
         assertNotNull(decision.offer());
@@ -60,8 +64,8 @@ class LoanEvaluationServiceTest {
                 RejectionReason.EMI_EXCEEDS_60_PERCENT
         );
 
-        printCheck("Rejection status for multiple eligibility failures", ApplicationStatus.REJECTED, decision.status());
-        printCheck("Rejection reasons for low score, age-tenure, and EMI limit", expectedReasons, decision.rejectionReasons());
+        logCheck("Rejection status for multiple eligibility failures", ApplicationStatus.REJECTED, decision.status());
+        logCheck("Rejection reasons for low score, age-tenure, and EMI limit", expectedReasons, decision.rejectionReasons());
         assertEquals(ApplicationStatus.REJECTED, decision.status());
         assertNull(decision.riskBand());
         assertNull(decision.offer());
@@ -77,8 +81,8 @@ class LoanEvaluationServiceTest {
 
         List<RejectionReason> expectedReasons = List.of(RejectionReason.EMI_EXCEEDS_50_PERCENT);
 
-        printCheck("Rejection status when final offer EMI is above 50% income", ApplicationStatus.REJECTED, decision.status());
-        printCheck("Rejection reason for final offer EMI limit", expectedReasons, decision.rejectionReasons());
+        logCheck("Rejection status when final offer EMI is above 50% income", ApplicationStatus.REJECTED, decision.status());
+        logCheck("Rejection reason for final offer EMI limit", expectedReasons, decision.rejectionReasons());
         assertEquals(ApplicationStatus.REJECTED, decision.status());
         assertNull(decision.riskBand());
         assertNull(decision.offer());
@@ -108,7 +112,7 @@ class LoanEvaluationServiceTest {
         );
     }
 
-    private void printCheck(String check, Object expected, Object actual) {
-        System.out.printf("%s: expected=%s, actual=%s%n", check, expected, actual);
+    private void logCheck(String check, Object expected, Object actual) {
+        log.info("{}: expected={}, actual={}", check, expected, actual);
     }
 }
