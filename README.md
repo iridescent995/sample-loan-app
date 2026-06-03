@@ -29,6 +29,28 @@ The service starts on:
 http://localhost:8080
 ```
 
+Sample curl
+
+```curl
+curl --location 'http://localhost:8080/applications' \
+--header 'Content-Type: application/json' \
+--data '{
+    "applicant": {
+        "name": "string",
+        "age": 30,
+        "monthlyIncome": 75000,
+        "employmentType": "SALARIED",
+        "creditScore": 720
+    },
+    "loan": {
+        "amount": 500000,
+        "tenureMonths": 36,
+        "purpose": "PERSONAL"
+    }
+}'
+```
+
+
 The main endpoint is:
 
 ```text
